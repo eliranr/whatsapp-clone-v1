@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react';
-
+import {useRouter} from 'next/router';
 import {authentication} from '../firebase-config';
 import {RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 
 
-export default function login() {
+export default function Login() {
     const [dataLogin, setDataLogin] = useState(initialForm);
     const [isDis, setisDis] = useState(false);
     const [SendSms, setSendSms] = useState(false);
@@ -45,6 +45,7 @@ export default function login() {
             confirmationResult.confirm(Number(dataLogin.code)).then((result) => {
                 const user = result.user;
                 console.log(user);
+                const router = useRouter('/');
               }).catch((error) => {
                 console.log(error);
               });
