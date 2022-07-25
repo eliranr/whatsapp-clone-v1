@@ -25,7 +25,7 @@ export default function Chat() {
           </div>
           <DotsVerticalIcon className="h-7 hoverEffect"/>
         </div>
-        <div id='boten' className='flex flex-grow flex-col-reverse overflow-x-scroll py-1' onScroll={(e) => setScrollPosition(e.target.scrollTop)}>
+        <div id='boten' className='flex flex-grow flex-col-reverse overflow-y-scroll py-1' onScroll={(e) => setScrollPosition(e.target.scrollTop)}>
           {messages.map((mess) =>
             <div className={`flex w-full ${mess.me ? 'justify-start' : 'justify-end'}`}>
                 <div 

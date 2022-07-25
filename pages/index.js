@@ -1,7 +1,15 @@
 import { SearchIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import {useRouter} from 'next/router';
+import {authentication} from '../firebase-config';
+import {useState, useEffect} from 'react';
 
 export default function Home() {
+  useEffect(() => {
+    console.log(authentication);
+    const user = authentication.currentUser;
+    console.log(user);
+  }, [])
+
   const router = useRouter();
   return (
     <div>
