@@ -17,6 +17,7 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [contacts, setContacts] = useState(null);
+  const [dataMessages, setDataMessages] = useState(null);
 
   //const [user0, setUser0] = useRecoilState(modalState);
   //console.log(user0)
@@ -30,6 +31,7 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
     )
     }
   }, [db, user]);
+
 
 
   useEffect(() => {
