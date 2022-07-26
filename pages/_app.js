@@ -6,12 +6,17 @@ import {useState, useEffect} from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import {useRouter} from 'next/router';
 
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilState } from 'recoil';
+//import {modalState} from '../atom/modalAtom';
+
 
 function MyApp({ Component, pageProps: {session, ...pageProps} }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+
+  //const [user0, setUser0] = useRecoilState(modalState);
+  //console.log(user0)
 
 
   useEffect(() => {
@@ -25,6 +30,7 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
       
     });
   }, [])
+
 
   if (loading) return <h1>Loading...</h1>
 
