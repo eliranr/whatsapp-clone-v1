@@ -6,17 +6,17 @@ import {useState, useEffect} from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import {useRouter} from 'next/router';
 
+import { RecoilRoot } from 'recoil';
 
 function MyApp({ Component, pageProps: {session, ...pageProps} }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
+
   useEffect(() => {
     onAuthStateChanged(authentication, (currentUser) => { 
-      
       if (currentUser) {
-        console.log(currentUser);
         setUser(currentUser);
       } else {
         console.log('noooo');
@@ -38,13 +38,13 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
   }
 
   return (
-    <>
+    <RecoilRoot>
       <Head>
           <title>whatsapp clone</title>
           <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Component {...pageProps} />
-    </>
+      <Component {...pageProps} user={user} />
+    </RecoilRoot>
   )
 }
 

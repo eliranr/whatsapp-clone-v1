@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 
 
 
-export default function Chat() {
+export default function Chat({user}) {
   const router = useRouter();
   const { ids } = router.query;
 

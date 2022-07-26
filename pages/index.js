@@ -2,8 +2,9 @@ import { SearchIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import {useRouter} from 'next/router';
 
 
-export default function Home() {
+export default function Home({user}) {
   const router = useRouter();
+  console.log(user);
 
   return (
     <div>
