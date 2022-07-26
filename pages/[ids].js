@@ -9,11 +9,7 @@ export default function Chat({user}) {
   const { ids } = router.query;
 
   const [scrollPosition, setScrollPosition] = useState(0);
-
-  
   const [messages, setMessages] = useState(messaging);
-
-
 
     return (
       <div className='flex flex-col h-[100vh] bg-auto bg-center' style={{background: "url('images/bg-chat1.png')"}}>
