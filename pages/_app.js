@@ -6,17 +6,30 @@ import {useState, useEffect} from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import {useRouter} from 'next/router';
 
-import { RecoilRoot, useRecoilState } from 'recoil';
-//import {modalState} from '../atom/modalAtom';
+import { RecoilRoot } from 'recoil';
+import {db} from '../firebase-config';
+import { onSnapshot, doc, setDoc, addDoc, serverTimestamp, collection, query } from 'firebase/firestore';
+
 
 
 function MyApp({ Component, pageProps: {session, ...pageProps} }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [contacts, setContacts] = useState(null);
 
   //const [user0, setUser0] = useRecoilState(modalState);
   //console.log(user0)
+
+  useEffect(() => {
+    if (user != null) {
+      onSnapshot(
+        doc(db, 'contacts', user.uid), (snapshot) => {
+            setContacts(snapshot.data().list);
+        }
+    )
+    }
+  }, [db, user]);
 
 
   useEffect(() => {
@@ -27,7 +40,6 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
         console.log('noooo');
       }
       setLoading(false);
-      
     });
   }, [])
 
@@ -42,14 +54,16 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
     router.push('/login');
     return <h1>Loading...</h1>
   }
-
+  if (user && contacts == null) {
+    return <h1>Loading...</h1>
+  }
   return (
     <RecoilRoot>
       <Head>
           <title>whatsapp clone</title>
           <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Component {...pageProps} user={user} />
+      <Component {...pageProps} user={user} contacts={contacts} />
     </RecoilRoot>
   )
 }
