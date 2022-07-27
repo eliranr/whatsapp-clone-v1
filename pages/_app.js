@@ -71,7 +71,7 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
       try {
         return b.data().timestamp.valueOf() - a.data().timestamp.valueOf()
       } catch(err) {
-        console.log(a.data().timestamp)
+        //console.log(a.data().timestamp)
       }
     })
   }

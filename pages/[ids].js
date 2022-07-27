@@ -34,6 +34,7 @@ export default function Chat({user, contacts, dataMessages}) {
       text: input,
       timestamp: serverTimestamp(),
     });
+    setInput('');
     const imageRef = ref(storage, `posts/${docRef.id}/image`);
     if (slectedFile) {
       await uploadString(imageRef, slectedFile, 'data_url').then(async() => {
@@ -46,7 +47,7 @@ export default function Chat({user, contacts, dataMessages}) {
     }
 
     SetSlectedFile(null);
-    setInput('');
+    
     setDisBut(false);
   }
 
@@ -87,9 +88,12 @@ export default function Chat({user, contacts, dataMessages}) {
             <div key={mess.id} className={`flex w-full ${mess.data().from == user.phoneNumber ? 'justify-start' : 'justify-end'}`}>
                 <div 
                   className={`${mess.data().from == user.phoneNumber ? 'bg-green-300' : 'bg-white'} 
-                  rounded-full py-1 px-4 mx-2 my-1 w-fit`}
+                  rounded-xl mx-2 my-1 w-fit py-1 px-1`}
                 >
-                  {mess.data().text}
+                  {mess.data().image && <img className='rounded-xl w-fit' src={mess.data().image} />}
+                  {mess.data().text != '' && <span className='mx-1'>{mess.data().text}</span>}
+                  
+
                 </div>
             </div>
           )}
@@ -97,14 +101,14 @@ export default function Chat({user, contacts, dataMessages}) {
         <form className='p-2 pt-0 flex flex-row' onSubmit={sendMes}>
           <input onChange={(e) => setInput(e.target.value)} value={input} type='text' placeholder='Message' className='w-full h-10 rounded-full px-4' />
           <div className="" onClick={() => filePickerRef.current.click()}>
-              <PhotographIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100" />
+              <PhotographIcon className={`${slectedFile && 'bg-red-500'} h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100`} />
               <input 
                   onChange={addImageToPost} 
                   type='file' 
                   hidden
                   ref={filePickerRef} />
           </div>
-          <button disabled={!input.trim() || disBut} type='submit' className='bg-green-500 disabled:opacity-50 rounded-full text-white w-10 h-10 flex justify-center items-center hover:bg-green-400'><PaperAirplaneIcon className='h-6 rotate-90' /></button>
+          <button disabled={!disBut && !input.trim() && !slectedFile } type='submit' className='bg-green-500 disabled:opacity-50 rounded-full text-white w-10 h-10 flex justify-center items-center hover:bg-green-400'><PaperAirplaneIcon className='h-6 rotate-90' /></button>
         </form>
       </div>
     )
