@@ -32,7 +32,7 @@ export default function Login() {
             setisDis(true);
             setUpRecaptcha();
             let appVerifier = window.recaptchaVerifier;
-            let phoneNumber = '+972546541545';
+            let phoneNumber = '+972' + dataLogin.phone;
             signInWithPhoneNumber(authentication, phoneNumber, appVerifier)
             .then(confirmationResult => {
                 window.confirmationResult = confirmationResult;

@@ -8,7 +8,7 @@ import {useRouter} from 'next/router';
 
 import { RecoilRoot } from 'recoil';
 import {db} from '../firebase-config';
-import { onSnapshot, doc, setDoc, addDoc, serverTimestamp, collection, query } from 'firebase/firestore';
+import { onSnapshot, doc, collection, query, orderBy, where, getDocs } from 'firebase/firestore';
 
 
 
@@ -17,21 +17,98 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [contacts, setContacts] = useState(null);
-  const [dataMessages, setDataMessages] = useState(null);
+  const [dataMessages, setDataMessages] = useState([]);
+  const [dataMessages1, setDataMessages1] = useState([]);
+  const [dataMessages2, setDataMessages2] = useState([]);
 
   //const [user0, setUser0] = useRecoilState(modalState);
   //console.log(user0)
 
   useEffect(() => {
     if (user != null) {
-      onSnapshot(
-        doc(db, 'contacts', user.uid), (snapshot) => {
-            setContacts(snapshot.data().list);
-        }
-    )
+      try {
+        onSnapshot(
+          doc(db, 'contacts', user.uid), (snapshot) => {
+            if (snapshot.data() != null) {
+              setContacts(snapshot.data().list);
+            } else {
+              setContacts([]);
+            }
+          }
+        )
+      } catch (err) {
+        console.log(err);
+      }
+      
     }
   }, [db, user]);
 
+
+
+  ///////// start ////
+
+  useEffect(() => {
+    if (user == null) return;
+    onSnapshot(
+      query(collection(db, 'messages'), where("from", "==", user.phoneNumber)), (snapshot) => {
+        setDataMessages1([...snapshot.docs, ...dataMessages]);
+      }
+    )
+    onSnapshot(
+      query(collection(db, 'messages'), where("to", "==", user.phoneNumber)), (snapshot) => {
+        setDataMessages2([...snapshot.docs, ...dataMessages]);
+      }
+    )
+
+
+
+
+    
+  }, [db, user]);
+
+  const sortTime = (array) => {
+    return array.sort((a, b) => {
+      try {
+        return b.data().timestamp.valueOf() - a.data().timestamp.valueOf()
+      } catch(err) {
+        console.log(a.data().timestamp)
+      }
+    })
+  }
+
+
+  /////
+/*
+  useEffect(async () => {
+    console.log('aaa');
+    if (contacts != null) {
+      var newArray = [];
+      const q = query(collection(db, "messages"), where("from", "==", user.phoneNumber));
+      const q1 = query(collection(db, "messages"), where("to", "==", user.phoneNumber));
+      const querySnapshot = await getDocs(q);
+      const querySnapshot1 = await getDocs(q1);
+      
+      querySnapshot.forEach((doc) => {
+        newArray.push(doc.data())
+      });
+      querySnapshot1.forEach((doc) => {
+        newArray.push(doc.data())
+      });
+
+      let sorted_array = newArray.sort((a, b) => {
+        try {
+          return a.timestamp.valueOf() - b.timestamp.valueOf()
+        } catch(err) {
+          if (a.timestamp == null) {
+            return b.timestamp.valueOf()
+          }
+        }
+        
+      });
+      setDataMessages(sorted_array.reverse())
+    }
+  }, [db, contacts]);
+*/
 
 
   useEffect(() => {
@@ -65,7 +142,7 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
           <title>whatsapp clone</title>
           <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Component {...pageProps} user={user} contacts={contacts} />
+      <Component {...pageProps} user={user} contacts={contacts} dataMessages={sortTime([...dataMessages1, ...dataMessages2])} />
     </RecoilRoot>
   )
 }
