@@ -17,12 +17,10 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [contacts, setContacts] = useState(null);
-  const [dataMessages, setDataMessages] = useState([]);
   const [dataMessages1, setDataMessages1] = useState([]);
   const [dataMessages2, setDataMessages2] = useState([]);
 
-  //const [user0, setUser0] = useRecoilState(modalState);
-  //console.log(user0)
+
 
   useEffect(() => {
     if (user != null) {
@@ -51,12 +49,12 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
     if (user == null) return;
     onSnapshot(
       query(collection(db, 'messages'), where("from", "==", user.phoneNumber)), (snapshot) => {
-        setDataMessages1([...snapshot.docs, ...dataMessages]);
+        setDataMessages1([...snapshot.docs, ...dataMessages1]);
       }
     )
     onSnapshot(
       query(collection(db, 'messages'), where("to", "==", user.phoneNumber)), (snapshot) => {
-        setDataMessages2([...snapshot.docs, ...dataMessages]);
+        setDataMessages2([...snapshot.docs, ...dataMessages2]);
       }
     )
 
@@ -76,47 +74,16 @@ function MyApp({ Component, pageProps: {session, ...pageProps} }) {
     })
   }
 
-
-  /////
-/*
-  useEffect(async () => {
-    console.log('aaa');
-    if (contacts != null) {
-      var newArray = [];
-      const q = query(collection(db, "messages"), where("from", "==", user.phoneNumber));
-      const q1 = query(collection(db, "messages"), where("to", "==", user.phoneNumber));
-      const querySnapshot = await getDocs(q);
-      const querySnapshot1 = await getDocs(q1);
-      
-      querySnapshot.forEach((doc) => {
-        newArray.push(doc.data())
-      });
-      querySnapshot1.forEach((doc) => {
-        newArray.push(doc.data())
-      });
-
-      let sorted_array = newArray.sort((a, b) => {
-        try {
-          return a.timestamp.valueOf() - b.timestamp.valueOf()
-        } catch(err) {
-          if (a.timestamp == null) {
-            return b.timestamp.valueOf()
-          }
-        }
-        
-      });
-      setDataMessages(sorted_array.reverse())
-    }
-  }, [db, contacts]);
-*/
-
-
   useEffect(() => {
     onAuthStateChanged(authentication, (currentUser) => { 
       if (currentUser) {
         setUser(currentUser);
       } else {
-        console.log('noooo');
+        setUser(null);
+        setContacts(null)
+        setDataMessages1([])
+        setDataMessages2([])
+        setContacts(null)
       }
       setLoading(false);
     });

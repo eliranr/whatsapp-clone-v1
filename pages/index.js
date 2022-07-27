@@ -5,7 +5,8 @@ import {useState, useEffect} from 'react';
 import {db} from '../firebase-config';
 import { addDoc, setDoc, collection, serverTimestamp, doc, updateDoc  } from "firebase/firestore";
 import Contacts from "../components/Contacts";
-
+import { signOut } from "firebase/auth";
+import {authentication} from '../firebase-config';
 
 export default function Home({user, contacts}) {
   const router = useRouter();
@@ -98,7 +99,13 @@ export default function Home({user, contacts}) {
               <a href="#" onClick={() => document.getElementById('file_inp').click()} className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Import Contacts</a>
             </li>
             <li>
-              <a href="#" className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Logout</a>
+              <a href="#" onClick={() => {
+                signOut(authentication).then(() => {
+                  console.log('logout suscsses!!!')
+                }).catch((error) => {
+                  console.log(error);
+                });
+              }} className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">SignOut</a>
             </li>
           </ul>
         </div>
