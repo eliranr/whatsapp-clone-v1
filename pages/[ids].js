@@ -1,9 +1,10 @@
 import {useRouter} from 'next/router';
-import { ArrowSmLeftIcon, DotsVerticalIcon } from "@heroicons/react/outline";
+import { ArrowSmLeftIcon, DotsVerticalIcon, PhotographIcon } from "@heroicons/react/outline";
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
-import { useState, useEffect } from 'react';
-import { addDoc, collection, serverTimestamp  } from "firebase/firestore";
-import {db} from '../firebase-config';
+import { useState, useEffect, useRef } from 'react';
+import { addDoc, collection, serverTimestamp, updateDoc, doc  } from "firebase/firestore";
+import {db, storage} from '../firebase-config';
+import { getDownloadURL, uploadString, ref } from "firebase/storage";
 
 
 
@@ -14,15 +15,12 @@ export default function Chat({user, contacts, dataMessages}) {
   const [input, setInput] = useState('');
   const [disBut, setDisBut] = useState(false);
   const [currentMess, setCurrentMess] = useState([]);
+  const [slectedFile, SetSlectedFile] = useState(null);
+  const filePickerRef = useRef(null)
 
   useEffect(() => {
     setCurrentMess(dataMessages.filter((m) => (m.data().from == user.phoneNumber && m.data().to == ids) || (m.data().from == ids) ));
   }, [dataMessages])
-
-
-
-
-
 
   //////
   
@@ -36,10 +34,38 @@ export default function Chat({user, contacts, dataMessages}) {
       text: input,
       timestamp: serverTimestamp(),
     });
+    const imageRef = ref(storage, `posts/${docRef.id}/image`);
+    if (slectedFile) {
+      await uploadString(imageRef, slectedFile, 'data_url').then(async() => {
+        const downloadURL = await getDownloadURL(imageRef);
+        console.log(downloadURL);
+        await updateDoc(doc(db, 'messages', docRef.id), {
+          image: downloadURL,
+        })
+      })
+    }
 
+    SetSlectedFile(null);
     setInput('');
     setDisBut(false);
   }
+
+
+  const addImageToPost = (e) => {
+    const reader = new FileReader();
+    if (e.target.files[0]) {
+        reader.readAsDataURL(e.target.files[0])
+    }
+    reader.onload = (readerEvent) => {
+      SetSlectedFile(readerEvent.target.result);
+    }
+  };
+
+
+
+
+
+
     var name = ids;
     if (contacts.length > 0) {
       name = contacts.find(({phone}) => phone == ids).name;
@@ -70,6 +96,14 @@ export default function Chat({user, contacts, dataMessages}) {
         </div>
         <form className='p-2 pt-0 flex flex-row' onSubmit={sendMes}>
           <input onChange={(e) => setInput(e.target.value)} value={input} type='text' placeholder='Message' className='w-full h-10 rounded-full px-4' />
+          <div className="" onClick={() => filePickerRef.current.click()}>
+              <PhotographIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100" />
+              <input 
+                  onChange={addImageToPost} 
+                  type='file' 
+                  hidden
+                  ref={filePickerRef} />
+          </div>
           <button disabled={!input.trim() || disBut} type='submit' className='bg-green-500 disabled:opacity-50 rounded-full text-white w-10 h-10 flex justify-center items-center hover:bg-green-400'><PaperAirplaneIcon className='h-6 rotate-90' /></button>
         </form>
       </div>
