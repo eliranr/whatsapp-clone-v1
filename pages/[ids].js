@@ -83,20 +83,22 @@ export default function Chat({user, contacts, dataMessages}) {
           </div>
           <DotsVerticalIcon className="h-7 hoverEffect"/>
         </div>
-        <div id='boten' className='flex flex-grow flex-col-reverse overflow-y-scroll py-1' onScroll={(e) => setScrollPosition(e.target.scrollTop)}>
+        <div id='boten' className='flex flex-grow flex-col-reverse overflow-y-scroll py-1 overflow-x-hidden' onScroll={(e) => setScrollPosition(e.target.scrollTop)}>
+          
           {currentMess.map((mess) =>
             <div key={mess.id} className={`flex w-full ${mess.data().from == user.phoneNumber ? 'justify-start' : 'justify-end'}`}>
                 <div 
                   className={`${mess.data().from == user.phoneNumber ? 'bg-green-300' : 'bg-white'} 
-                  rounded-xl mx-2 my-1 w-fit py-1 px-1`}
+                   rounded-xl mx-2 my-1 w-fit  py-1 px-1 max-w-[90%] break-words`}
                 >
-                  {mess.data().image && <img className='rounded-xl w-fit' src={mess.data().image} />}
+                  {mess.data().image && <img className='rounded-xl ' src={mess.data().image} />}
                   {mess.data().text != '' && <span className='mx-1'>{mess.data().text}</span>}
                   
 
                 </div>
             </div>
           )}
+
         </div>
         <form className='p-2 pt-0 flex flex-row' onSubmit={sendMes}>
           <input onChange={(e) => setInput(e.target.value)} value={input} type='text' placeholder='Message' className='w-full h-10 rounded-full px-4' />
